@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: BPMN2
+Bundle-SymbolicName: BPMN2;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: bpmn2.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.bpmn2;bundle-version="0.7.0",
+ PromniCAT;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
