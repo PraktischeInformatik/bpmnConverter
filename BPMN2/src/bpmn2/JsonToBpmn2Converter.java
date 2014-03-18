@@ -1244,6 +1244,7 @@ public class JsonToBpmn2Converter {
 			for (BaseElement element : bpmnElements.values()) {
 				if (element instanceof Participant) {
 					org.eclipse.bpmn2.Process process = fact.createProcess();
+					process.setId(element.getId() + "_process");
 					LaneSet laneset = fact.createLaneSet();
 					process.getLaneSets().add(laneset);
 
