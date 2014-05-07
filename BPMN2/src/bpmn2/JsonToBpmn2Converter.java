@@ -104,7 +104,7 @@ public class JsonToBpmn2Converter {
 	private HashMap<String, BaseElement> bpmnElements = new HashMap<String, BaseElement>();
 	// set to true if at least one collaboration element was found
 	private boolean collaboration = false;
-	//indicated unmapped elements
+	// indicated unmapped elements
 	private boolean incompleteDiagram = false;
 
 	private String path = "";
@@ -117,13 +117,13 @@ public class JsonToBpmn2Converter {
 			"EndMultipleEvent", "EndTerminateEvent", "IntermediateEvent", "IntermediateNoneEventCatching", "IntermediateMessageEventCatching",
 			"IntermediateTimerEventCatching", "IntermediateErrorEventCatching", "IntermediateCancelEventCatching", "IntermediateCompensationEventCatching",
 			"IntermediateRuleEventCatching", "IntermediateLinkEventCatching", "IntermediateMultipleEventCatching", "IntermediateSignalEventCatching",
-			"IntermediateSignalEventThrowing", "IntermediateEscalationEventThrowing", "IntermediateMultipleEventThrowing", "IntermediateMessageEventThrowing",
-			"IntermediateLinkEventThrowing", "IntermediateNoneEvent", "IntermediateMessageEvent", "IntermediateTimerEvent", "IntermediateErrorEvent",
-			"IntermediateConditionalEvent", "IntermediateCancelEvent", "IntermediateCompensationEvent", "IntermediateRuleEvent", "IntermediateLinkEvent",
-			"IntermediateMultipleEvent", "IntermediateCompensationEventThrowing", "Exclusive_Databased_Gateway", "Exclusive_Databased_Gateway",
-			"EventbasedGateway", "InclusiveGateway", "ComplexGateway", "Lane", "Pool", "CollapsedPool", "DataObject", "Subprocess", "CollapsedSubprocess",
-			"processparticipant", "TextAnnotation", "ITSystem", "Message", "DataStore", "Group", "IntermediateParallelMultipleEventCatching",
-			"StartParallelMultipleEvent" };
+			"IntermediateConditionalEventCatching", "IntermediateSignalEventThrowing", "IntermediateEscalationEventThrowing",
+			"IntermediateMultipleEventThrowing", "IntermediateMessageEventThrowing", "IntermediateLinkEventThrowing", "IntermediateNoneEvent",
+			"IntermediateMessageEvent", "IntermediateTimerEvent", "IntermediateErrorEvent", "IntermediateConditionalEvent", "IntermediateCancelEvent",
+			"IntermediateCompensationEvent", "IntermediateRuleEvent", "IntermediateLinkEvent", "IntermediateMultipleEvent","IntermediateEscalationEvent",
+			"IntermediateCompensationEventThrowing", "Exclusive_Databased_Gateway", "Exclusive_Databased_Gateway", "EventbasedGateway", "InclusiveGateway",
+			"ComplexGateway", "ParallelGateway", "Lane", "Pool", "CollapsedPool", "DataObject", "Subprocess", "CollapsedSubprocess", "processparticipant",
+			"TextAnnotation", "ITSystem", "Message", "DataStore", "Group", "IntermediateParallelMultipleEventCatching", "StartParallelMultipleEvent" };
 	private String[] edges = { "SequenceFlow", "Association_Undirected", "Association_Unidirectional", "Association_Bidirectional", "MessageFlow" };
 
 	private ArrayList<String> unmatchedItems = new ArrayList<String>();
@@ -619,7 +619,6 @@ public class JsonToBpmn2Converter {
 		} catch (NullPointerException e) {
 
 		}
-		// TODO can throw NullPointer
 		if (!shape.getProperty("monitoring").isEmpty()) {
 			Monitoring monitoring = fact.createMonitoring();
 			monitoring.setId(shape.getProperty("monitoring"));
@@ -749,11 +748,6 @@ public class JsonToBpmn2Converter {
 		switch (eventType) {
 		case "Message": {
 			MessageEventDefinition message = fact.createMessageEventDefinition();
-			// TODO throws NullPointer
-			// if (!shape.getProperty("messageref").isEmpty()) {
-			// message.setMessageRef((Message) bpmnElements.get(shape
-			// .getProperty("messageref")));
-			// }
 			eventDefinition = message;
 			break;
 		}
@@ -817,12 +811,6 @@ public class JsonToBpmn2Converter {
 		}
 		case "Condiational": {
 			ConditionalEventDefinition condition = fact.createConditionalEventDefinition();
-			//FormalExpression expression = fact.createFormalExpression();
-			// TODO throws NullPointer
-			// if (!shape.getProperty("condition").isEmpty()) {
-			// expression.setBody(shape.getProperty("condition"));
-			// condition.setCondition(expression);
-			// }
 			eventDefinition = condition;
 		}
 		}
@@ -869,15 +857,31 @@ public class JsonToBpmn2Converter {
 		Point spoint = dcFact.createPoint();
 
 		for (Shape incoming : shape.getIncomings()) {
-			spoint.setX(incoming.getUpperLeft().getX().floatValue());
-			spoint.setY(incoming.getUpperLeft().getY().floatValue());
+			Shape pshape = incoming;
+			float x = incoming.getLowerRight().getX().floatValue();
+			float y = incoming.getLowerRight().getY().floatValue();
+			while(pshape.getParent()!=null){
+				x += pshape.getParent().getUpperLeft().getX().floatValue();
+				y += pshape.getParent().getUpperLeft().getY().floatValue();
+				pshape = pshape.getParent();
+			}
+			spoint.setX(x);
+			spoint.setY(y);
 			edge.getWaypoint().add(spoint);
 		}
 		Point tpoint = dcFact.createPoint();
 
 		for (Shape outgoing : shape.getOutgoings()) {
-			tpoint.setX(outgoing.getUpperLeft().getX().floatValue());
-			tpoint.setY(outgoing.getUpperLeft().getY().floatValue());
+			Shape pshape = outgoing;
+			float x = outgoing.getUpperLeft().getX().floatValue();
+			float y = outgoing.getUpperLeft().getY().floatValue();
+			while(pshape.getParent()!=null){
+				x += pshape.getParent().getUpperLeft().getX().floatValue();
+				y += pshape.getParent().getUpperLeft().getY().floatValue();
+				pshape = pshape.getParent();
+			}
+			tpoint.setX(x);
+			tpoint.setY(y);
 			edge.getWaypoint().add(tpoint);
 		}
 
@@ -890,9 +894,32 @@ public class JsonToBpmn2Converter {
 		Bounds bounds = dcFact.createBounds();
 		bounds.setHeight((float) shape.getHeight());
 		bounds.setWidth((float) shape.getWidth());
-		bounds.setX(shape.getUpperLeft().getX().floatValue());
-		bounds.setY(shape.getUpperLeft().getY().floatValue());
+		
+		Shape pshape = shape;
+		float x = shape.getUpperLeft().getX().floatValue();
+		float y = shape.getUpperLeft().getY().floatValue();
+		while(pshape.getParent()!=null){
+			x += pshape.getParent().getUpperLeft().getX().floatValue();
+			y += pshape.getParent().getUpperLeft().getY().floatValue();
+			pshape = pshape.getParent();
+		}
+		bounds.setX(x);
+		bounds.setY(y);
 		bpmnShape.setBounds(bounds);
+
+		// if(shape.getStencilId().equals("Pool") ||
+		// shape.getStencilId().equals("CollapsedPool") ||
+		// shape.getStencilId().equals("processparticipant")){
+		// BPMNShape bpmnShapeProcess = diFact.createBPMNShape();
+		// Bounds boundsProcess = dcFact.createBounds();
+		// boundsProcess.setHeight((float) shape.getHeight());
+		// boundsProcess.setWidth((float) shape.getWidth());
+		// boundsProcess.setX(shape.getUpperLeft().getX().floatValue());
+		// boundsProcess.setY(shape.getUpperLeft().getY().floatValue());
+		// bpmnShapeProcess.setBounds(bounds);
+		// bpmnShapeProcess.setBpmnElement(((Participant)bpmnElements.get(shape.getResourceId())).getProcessRef());
+		// documentRoot.getDefinitions().getDiagrams().get(0).getPlane().getPlaneElement().add(bpmnShapeProcess);
+		// }
 
 		if (shape.getStencilId().equals("CollapsedSubprocess"))
 			bpmnShape.setIsExpanded(false);
@@ -909,13 +936,6 @@ public class JsonToBpmn2Converter {
 		MessageFlow flow = fact.createMessageFlow();
 		flow.setId(shape.getResourceId());
 		flow.setName(shape.getProperty("name"));
-
-		// TODO throws NullPointer
-		// if (!shape.getProperty("messageref").isEmpty()) {
-		// flow.setMessageRef((Message) bpmnElements.get(shape
-		// .getProperty("messageref")));
-		// }
-
 		bpmnElements.put(shape.getResourceId(), flow);
 		collaboration = true;
 		return flow;
@@ -1246,6 +1266,7 @@ public class JsonToBpmn2Converter {
 					org.eclipse.bpmn2.Process process = fact.createProcess();
 					process.setId(element.getId() + "_process");
 					LaneSet laneset = fact.createLaneSet();
+					laneset.setId(element.getId() + "_laneset");
 					process.getLaneSets().add(laneset);
 
 					documentRoot.getDefinitions().getRootElements().add(process);
@@ -1274,6 +1295,7 @@ public class JsonToBpmn2Converter {
 					if (bpmnElements.get(childshape.getResourceId()) instanceof Lane) {
 						if (firstChildlane) {
 							LaneSet laneset = fact.createLaneSet();
+							laneset.setId(shape.getResourceId() + "_laneset");
 							((Lane) bpmnElements.get(shape.getResourceId())).setChildLaneSet(laneset);
 							firstChildlane = false;
 						}
@@ -1397,6 +1419,7 @@ public class JsonToBpmn2Converter {
 					if (bpmnElements.get(childshape.getResourceId()) instanceof Lane) {
 						if (firstLane) {
 							LaneSet laneset = fact.createLaneSet();
+							laneset.setId(shape.getResourceId() + "_laneset");
 							((SubProcess) bpmnElements.get(shape.getResourceId())).getLaneSets().add(laneset);
 							firstLane = false;
 						}

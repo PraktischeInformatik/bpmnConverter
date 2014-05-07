@@ -28,22 +28,37 @@ public class Bpmn2 implements IApplication {
 		Files.write(Paths.get("UnmatchedItems.txt"), "".getBytes());
 		Files.write(Paths.get("IncompleteDiagrams.txt"), "".getBytes());
 
-//		ModelFilter modelFilter = new ModelFilter(Paths.get("C:\\Users\\Chrizz\\Downloads\\eclipse-modeling-juno-SR2-win32-x86_64\\eclipse\\workspace\\promnicat\\BPMN2Models"),10,250,20);
-//		modelFilter.createFilteredFile(false);
+
+//		Examples of using the ModelFilter to get a file containing all models, which match your parameters
+//		
+//		ModelFilter modelFilter = new ModelFilter(Paths.get("C:\\bpmn2Models"),1,1,15,1);
+//		modelFilter.createFilteredFile(true,false);
+//		ModelFilter modelFilter1 = new ModelFilter(Paths.get("C:\\bpmn2Models"),1,1,20,1);
+//		modelFilter1.createFilteredFile(true,false);
+//		ModelFilter modelFilter2 = new ModelFilter(Paths.get("C:\\bpmn2Models"),1,1,25,1);
+//		modelFilter2.createFilteredFile(true,false);
+//		ModelFilter modelFilter3 = new ModelFilter(Paths.get("C:\\bpmn2Models"),1,1,30,1);
+//		modelFilter3.createFilteredFile(true,false);
+//		ModelFilter modelFilter4 = new ModelFilter(Paths.get("C:\\bpmn2Models"),1,1,35,1);
+//		modelFilter4.createFilteredFile(true,false);
+//		ModelFilter modelFilter5 = new ModelFilter(Paths.get("C:\\bpmn2Models"),1,1,40,1);
+//		modelFilter5.createFilteredFile(true,false);
 		
-		// System.out.println("Revisions: "+modelFilter.countAllRevisions(modelFilter.noRevisionfilter(modelFilter.createFilteredFile(true))));
-		 convertModelsByFile(Paths.get("C:\\Program Files (x86)\\eclipse\\ModelsMinRevs10ModelsMinElements250ModelsMinDifferentElements20.txtRevisionsRestored855.txt"));
-//		 convertModelsByPath(Paths.get("C:\\Users\\Chrizz\\Downloads\\eclipse-modeling-juno-SR2-win32-x86_64\\eclipse\\BPMN2Models\\367593267\\BPMN2.0_Process\\2012-08-30_129589600\\129589600_rev17.json"));
-//		 convertModelsByPath(Paths.get("C:\\Users\\Chrizz\\Downloads\\eclipse-modeling-juno-SR2-win32-x86_64\\eclipse\\BPMN2Models\\367593267\\BPMN2.0_Process\\2012-08-30_129589600\\129589600_rev7.json"));
-		 // JsonToBpmn2Converter conv = new JsonToBpmn2Converter();
-		// conv.execute("C:\\Users\\Chrizz\\Downloads\\eclipse-modeling-juno-SR2-win32-x86_64\\eclipse\\workspace\\promnicat\\BPMN2Models\\1089424718\\BPMN2.0_Process\\2012-04-16_HW1 (Arthur)\\1616816944_rev1.json");
+
+//		Examples of using the JsonToBpmn2Converter to convert all Models contained in a path or file created by the ModelFilter
+//		
+// 		System.out.println("Revisions: "+modelFilter.countAllRevisions(modelFilter.noRevisionfilter(modelFilter.createFilteredFile(true))));
+//		convertModelsByFile(Paths.get("C:\\Program Files (x86)\\eclipse\\ModelsMinRevs10ModelsMinElements250ModelsMinDifferentElements20.txtRevisionsRestored855.txt"));
+//		convertModelsByPath(Paths.get("C:\\Users\\Chrizz\\Downloads\\eclipse-modeling-juno-SR2-win32-x86_64\\eclipse\\BPMN2Models\\367593267\\BPMN2.0_Process\\2012-08-30_129589600\\129589600_rev17.json"));
+//		convertModelsByPath(Paths.get("C:\\Users\\Chrizz\\Downloads\\eclipse-modeling-juno-SR2-win32-x86_64\\eclipse\\BPMN2Models\\367593267\\BPMN2.0_Process\\2012-08-30_129589600\\129589600_rev7.json"));
+// 		JsonToBpmn2Converter conv = new JsonToBpmn2Converter();
+// 		conv.execute("C:\\Users\\Chrizz\\Downloads\\eclipse-modeling-juno-SR2-win32-x86_64\\eclipse\\workspace\\promnicat\\BPMN2Models\\1089424718\\BPMN2.0_Process\\2012-04-16_HW1 (Arthur)\\1616816944_rev1.json");
 
 		return IApplication.EXIT_OK;
 	}
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 
 	}
 
